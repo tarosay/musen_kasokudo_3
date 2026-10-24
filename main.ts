@@ -12,7 +12,6 @@ let 振動しきい値 = 150
 let 変化しきい値 = 40
 let 停止時間 = 150
 let 送信間隔 = 100
-radio.setGroup(191)
 // A/Bの識別
 if (input.buttonIsPressed(Button.A)) {
     名前Y = "AY"
@@ -25,6 +24,11 @@ let 重力Y = input.acceleration(Dimension.Y)
 let 前回Y = 重力Y
 let 最終変化時刻 = input.runningTime()
 let 送信時刻 = input.runningTime()
+serial.redirect(
+SerialPin.USB_TX,
+SerialPin.USB_RX,
+BaudRate.BaudRate115200
+)
 basic.forever(function () {
     今 = input.runningTime()
     y = input.acceleration(Dimension.Y)
@@ -54,7 +58,7 @@ basic.forever(function () {
             if (振動状態 != 0 && 前回反転時刻 >= 0) {
                 周期 = 今 - 前回反転時刻
                 if (周期 >= 60 && 周期 <= 600) {
-                    速度 = 10000 / 周期
+                    速度 = 5000 / 周期
                     if (速度 > 100) {
                         速度 = 100
                     }
@@ -66,7 +70,7 @@ basic.forever(function () {
     }
     // Y成分のみ100msごとに送信
     if (今 - 送信時刻 >= 送信間隔) {
-        radio.sendValue(名前Y, Math.round(速度))
+        serial.writeValue(名前Y, Math.round(速度))
         送信時刻 = 今
     }
     basic.pause(20)
