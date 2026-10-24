@@ -87,6 +87,7 @@ SerialPin.USB_TX,
 SerialPin.USB_RX,
 BaudRate.BaudRate115200
 )
+radio.setGroup(191)
 basic.forever(function () {
     let t: number;
 今 = input.runningTime()
@@ -243,6 +244,7 @@ basic.forever(function () {
     // シリアル出力
     if (今 - 送信時刻 >= 送信間隔) {
         serial.writeValue(名前Y, Math.round(速度))
+        radio.sendValue(名前Y, Math.round(速度))
         送信時刻 = 今
     }
     basic.pause(5)
